@@ -1,0 +1,125 @@
+.profile-page {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 5rem;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+}
+
+.profile-info-section h2,
+.order-history-section h2 {
+    font-size: 2.25rem;
+    margin-bottom: 2.5rem;
+    color: var(--color-primary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 1rem;
+}
+
+.profile-form {
+    background: white;
+    padding: 2.5rem;
+    border: 1px solid #eee;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.order-history-section {
+    position: sticky;
+    top: 100px;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.order-card-mini {
+    background: #fdfdfd;
+    border: 1px solid #f0f0f0;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.order-card-mini:hover {
+    border-color: var(--color-accent);
+    transform: translateX(5px);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.order-id {
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 1px;
+}
+
+.order-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.order-status.pending {
+    background: #fff4e5;
+    color: #b7791f;
+}
+
+.order-status.shipped {
+    background: #ebf8ff;
+    color: #2b6cb0;
+}
+
+.order-status.delivered {
+    background: #f0fff4;
+    color: #38a169;
+}
+
+.order-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.order-total {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.alert-success {
+    background: #f0fff4;
+    color: #22543d;
+    border-left: 4px solid #38a169;
+}
+
+.alert-danger {
+    background: #fff5f5;
+    color: #c53030;
+    border-left: 4px solid #f56565;
+}

@@ -1,0 +1,134 @@
+.product-card {
+    background: var(--color-background);
+    transition: all var(--transition-normal);
+    position: relative;
+    height: 100%;
+}
+
+.product-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    /* Slightly taller for fashion feel */
+    overflow: hidden;
+    background-color: var(--color-surface);
+}
+
+.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.08);
+}
+
+/* Minimal Overlay */
+.product-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 1.5rem;
+    opacity: 0;
+    transition: all var(--transition-normal);
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+.btn-quick-add {
+    background-color: var(--color-primary);
+    color: white;
+    width: 90%;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px;
+    transform: translateY(15px);
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.product-card:hover .btn-quick-add {
+    transform: translateY(0);
+}
+
+/* Elegant Badges */
+.badge {
+    position: absolute;
+    top: 15px;
+    padding: 5px 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 10;
+}
+
+.featured-badge {
+    left: 0;
+    background-color: var(--color-accent);
+    color: white;
+}
+
+.out-of-stock-badge {
+    right: 0;
+    background-color: #333;
+    color: white;
+}
+
+/* Refined Info */
+.product-info {
+    padding: 1.5rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-category {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.product-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+.product-price {
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.product-price span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 4px;
+}
