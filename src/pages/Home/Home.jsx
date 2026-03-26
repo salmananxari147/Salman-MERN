@@ -38,36 +38,33 @@ const Home = () => {
         }
     ];
 
-    /* Fetch Products */
+   /* Fetch Products */
+useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const { data: homeData } = await api.get('/products?showOnHome=true');
+            const fixedHomeData = homeData.map(product => ({
+                ...product,
+                image: `https://mern-backend-six-amber.vercel.app${product.image}`
+            }));
+            setProducts(fixedHomeData);
 
-    useEffect(() => {
+            const { data: featData } = await api.get('/products?isFeatured=true');
+            const fixedFeatData = featData.map(product => ({
+                ...product,
+                image: `https://mern-backend-six-amber.vercel.app${product.image}`
+            }));
+            setFeaturedProducts(fixedFeatData);
 
-        const fetchProducts = async () => {
+        } catch (error) {
+            console.error('Failed to fetch home products:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-            try {
-
-                const { data: homeData } = await api.get('/products?showOnHome=true');
-                setProducts(homeData);
-
-                const { data: featData } = await api.get('/products?isFeatured=true');
-                setFeaturedProducts(featData);
-
-            } catch (error) {
-
-                console.error('Failed to fetch home products:', error);
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        };
-
-        fetchProducts();
-
-    }, []);
-
+    fetchProducts();
+}, []);
     /* Carousel Auto Slide */
 
     useEffect(() => {
