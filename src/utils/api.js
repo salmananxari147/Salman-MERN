@@ -3,7 +3,7 @@ import useAuthStore from '../store/authStore';
 
 // Create an Axios instance
 const api = axios.create({
-    baseURL: '/api', // Using Vite proxy or relative path if deployed
+    baseURL: 'https://mern-backend-six-amber.vercel.app/api', // Using Vite proxy or relative path if deployed
     headers: {
         'Content-Type': 'application/json',
     },
