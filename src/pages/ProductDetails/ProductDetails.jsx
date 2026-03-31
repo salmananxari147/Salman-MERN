@@ -127,45 +127,49 @@ const ProductDetails = () => {
                 </nav>
 
                 <div className="product-details-grid">
-                    {/* Left: Images with Enhanced Gallery */}
-                    <div className="product-images">
-                        {product.images?.length > 1 && (
-                            <div className="image-thumbnails">
-                                {product.images.map((img, index) => (
-                                    <motion.div
-                                        key={index}
-                                        className={`thumbnail-container ${selectedImage === img ? 'active' : ''}`}
-                                        onClick={() => setSelectedImage(img)}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <img src={img} alt={`${product.name} view ${index + 1}`} />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
+    {/* Left: Images with Enhanced Gallery */}
+    <div className="product-images">
+        {product.images?.length > 1 && (
+            <div className="image-thumbnails">
+                {product.images.map((img, index) => (
+                    <motion.div
+                        key={index}
+                        className={`thumbnail-container ${selectedImage === img ? 'active' : ''}`}
+                        onClick={() => setSelectedImage(img)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        {/* ✅ Updated with backend URL */}
+                        <img
+                            src={`https://mern-website-ebon.vercel.app/${img}`}
+                            alt={`${product.name} view ${index + 1}`}
+                        />
+                    </motion.div>
+                ))}
+            </div>
+        )}
 
-                        <div className="main-image-wrapper">
-                            <motion.div
-                                className={`main-image-container ${imageZoom ? 'zoomed' : ''}`}
-                                onMouseEnter={() => setImageZoom(true)}
-                                onMouseLeave={() => setImageZoom(false)}
-                                onMouseMove={handleImageZoom}
-                            >
-                                <img
-                                    src={selectedImage}
-                                    alt={product.name}
-                                    className="main-image"
-                                    style={imageZoom ? {
-                                        transform: `scale(2)`,
-                                        transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
-                                    } : {}}
-                                />
-                            </motion.div>
+        <div className="main-image-wrapper">
+            <motion.div
+                className={`main-image-container ${imageZoom ? 'zoomed' : ''}`}
+                onMouseEnter={() => setImageZoom(true)}
+                onMouseLeave={() => setImageZoom(false)}
+                onMouseMove={handleImageZoom}
+            >
+                {/* ✅ Main image updated with backend URL */}
+                <img
+                    src={`https://mern-website-ebon.vercel.app/${selectedImage}`}
+                    alt={product.name}
+                    className="main-image"
+                    style={imageZoom
+                        ? { transform: `scale(2)`, transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
+                        : {}
+                    }
+                />
+            </motion.div>
 
-                            {/* Image Navigation Arrows for Mobile */}
-                            {product.images?.length > 1 && (
-                                <div className="mobile-image-nav">
+            {product.images?.length > 1 && (
+                <div className="mobile-image-nav">
                                     {/* <button
                                         className="nav-arrow prev"
                                         onClick={() => {
