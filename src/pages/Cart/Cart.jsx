@@ -49,57 +49,57 @@ const Cart = () => {
                     </div>
 
                     {cartItems.map((item) => (
-                        <div key={`${item.product}-${item.gazSelected}`} className="cart-row">
+    <div key={`${item.product}-${item.gazSelected}`} className="cart-row">
 
-                            <div className="col-product cart-product-info">
-                                <Link to={`/product/${item.product}`}>
-                                    <img src={item.image} alt={item.name} className="cart-item-img" />
-                                </Link>
-                                <div className="cart-item-details">
-                                    <Link to={`/product/${item.product}`} className="cart-item-name">{item.name}</Link>
-                                    <p className="cart-item-meta">Gaz: {item.gazSelected}</p>
-                                </div>
-                            </div>
+        <div className="col-product cart-product-info">
+            <Link to={`/product/${item.product}`}>
+                <img src={item.image} alt={item.name} className="cart-item-img" /> {/* ✅ full URL */}
+            </Link>
+            <div className="cart-item-details">
+                <Link to={`/product/${item.product}`} className="cart-item-name">{item.name}</Link>
+                <p className="cart-item-meta">Gaz: {item.gazSelected}</p>
+            </div>
+        </div>
 
-                            <div className="col-price cart-col-center">
-                                <span className="mobile-label">Price:</span>
-                                Rs. {(item.price / item.quantity).toLocaleString()}
-                            </div>
+        <div className="col-price cart-col-center">
+            <span className="mobile-label">Price:</span>
+            Rs. {(item.price / item.quantity).toLocaleString()}
+        </div>
 
-                            <div className="col-qty cart-col-center">
-                                <span className="mobile-label">Qty:</span>
-                                <div className="quantity-selector cart-qty">
-                                    <button
-                                        className="qty-btn"
-                                        onClick={() => handleQuantityChange(item.product, item.gazSelected, item.quantity, -1)}
-                                    >
-                                        <FiMinus />
-                                    </button>
-                                    <span className="qty-value">{item.quantity}</span>
-                                    <button
-                                        className="qty-btn"
-                                        onClick={() => handleQuantityChange(item.product, item.gazSelected, item.quantity, 1)}
-                                    >
-                                        <FiPlus />
-                                    </button>
-                                </div>
-                            </div>
+        <div className="col-qty cart-col-center">
+            <span className="mobile-label">Qty:</span>
+            <div className="quantity-selector cart-qty">
+                <button
+                    className="qty-btn"
+                    onClick={() => handleQuantityChange(item.product, item.gazSelected, item.quantity, -1)}
+                >
+                    <FiMinus />
+                </button>
+                <span className="qty-value">{item.quantity}</span>
+                <button
+                    className="qty-btn"
+                    onClick={() => handleQuantityChange(item.product, item.gazSelected, item.quantity, 1)}
+                >
+                    <FiPlus />
+                </button>
+            </div>
+        </div>
 
-                            <div className="col-total cart-col-center">
-                                <span className="mobile-label">Total:</span>
-                                <span className="cart-item-total">Rs. {item.price.toLocaleString()}</span>
+        <div className="col-total cart-col-center">
+            <span className="mobile-label">Total:</span>
+            <span className="cart-item-total">Rs. {item.price.toLocaleString()}</span>
 
-                                <button
-                                    className="btn-remove"
-                                    onClick={() => removeFromCart(item.product, item.gazSelected)}
-                                    title="Remove item"
-                                >
-                                    <FiTrash2 size={18} />
-                                </button>
-                            </div>
+            <button
+                className="btn-remove"
+                onClick={() => removeFromCart(item.product, item.gazSelected)}
+                title="Remove item"
+            >
+                <FiTrash2 size={18} />
+            </button>
+        </div>
 
-                        </div>
-                    ))}
+    </div>
+))}
                 </div>
 
                 {/* Cart Summary */}
