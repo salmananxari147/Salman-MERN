@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import api from '../../utils/api';
 import useCartStore from '../../store/cartStore';
 import ProductCard from '../../components/ProductCard/ProductCard';
@@ -28,6 +28,12 @@ const ProductDetails = () => {
 
     const { addToCart } = useCartStore();
 
+    // ✅ Helper: Safe image URL
+    const getImageUrl = (img) => {
+        if (!img) return '/placeholder.png';
+        return img.startsWith('http') ? img : `https://mern-website-ebon.vercel.app/${img}`;
+    };
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -54,41 +60,34 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
-    // Derived Dynamic Pricing Logic
     const basePrice = product.basePricePerGaz || 0;
     const unitPrice = basePrice * gazSelected;
     const totalPrice = unitPrice * quantity;
 
-    const handleGazChange = (e) => {
-        setGazSelected(Number(e.target.value));
-    };
+    const handleGazChange = (e) => setGazSelected(Number(e.target.value));
 
     const handleAddToCart = () => {
         if (product.countInStock <= 0) return;
-
         addToCart({
             product: product._id,
             name: product.name,
-            image: product.images[0],
+            image: selectedImage,
             price: totalPrice,
             gazSelected: gazSelected,
             quantity: quantity,
         });
-
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
     };
 
     const handleImageZoom = (e) => {
         if (!imageZoom) return;
-
         const { left, top, width, height } = e.target.getBoundingClientRect();
         const x = ((e.clientX - left) / width) * 100;
         const y = ((e.clientY - top) / height) * 100;
         setZoomPosition({ x, y });
     };
 
-    // Rating calculation (dummy for now)
     const rating = 4.5;
     const reviews = 124;
 
@@ -115,87 +114,51 @@ const ProductDetails = () => {
             <div className="container">
                 {/* Breadcrumb */}
                 <nav className="breadcrumb">
-                    <Link to="/">Home</Link>
-                    <span className="separator">/</span>
-                    <Link to="/shop">Shop</Link>
-                    <span className="separator">/</span>
-                    <Link to={`/shop?category=${product.category?.slug}`}>
-                        {product.category?.name || 'Unstitched'}
-                    </Link>
-                    <span className="separator">/</span>
+                    <Link to="/">Home</Link> / <Link to="/shop">Shop</Link> /{' '}
+                    <Link to={`/shop?category=${product.category?.slug}`}>{product.category?.name || 'Unstitched'}</Link> /{' '}
                     <span className="current">{product.name}</span>
                 </nav>
 
                 <div className="product-details-grid">
-    {/* Left: Images with Enhanced Gallery */}
-    <div className="product-images">
-        {product.images?.length > 1 && (
-            <div className="image-thumbnails">
-                {product.images.map((img, index) => (
-                    <motion.div
-                        key={index}
-                        className={`thumbnail-container ${selectedImage === img ? 'active' : ''}`}
-                        onClick={() => setSelectedImage(img)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        {/* ✅ Updated with backend URL */}
-                        <img
-                            src={`https://mern-website-ebon.vercel.app/${img}`}
-                            alt={`${product.name} view ${index + 1}`}
-                        />
-                    </motion.div>
-                ))}
-            </div>
-        )}
-
-        <div className="main-image-wrapper">
-            <motion.div
-                className={`main-image-container ${imageZoom ? 'zoomed' : ''}`}
-                onMouseEnter={() => setImageZoom(true)}
-                onMouseLeave={() => setImageZoom(false)}
-                onMouseMove={handleImageZoom}
-            >
-                {/* ✅ Main image updated with backend URL */}
-                <img
-                    src={`https://mern-website-ebon.vercel.app/${selectedImage}`}
-                    alt={product.name}
-                    className="main-image"
-                    style={imageZoom
-                        ? { transform: `scale(2)`, transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
-                        : {}
-                    }
-                />
-            </motion.div>
-
-            {product.images?.length > 1 && (
-                <div className="mobile-image-nav">
-                                    {/* <button
-                                        className="nav-arrow prev"
-                                        onClick={() => {
-                                            const currentIndex = product.images.indexOf(selectedImage);
-                                            const prevIndex = (currentIndex - 1 + product.images.length) % product.images.length;
-                                            setSelectedImage(product.images[prevIndex]);
-                                        }}
+                    {/* Left: Images */}
+                    <div className="product-images">
+                        {product.images?.length > 1 && (
+                            <div className="image-thumbnails">
+                                {product.images.map((img, index) => (
+                                    <motion.div
+                                        key={index}
+                                        className={`thumbnail-container ${selectedImage === img ? 'active' : ''}`}
+                                        onClick={() => setSelectedImage(img)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
-                                        ‹
-                                    </button>
-                                    <button
-                                        className="nav-arrow next"
-                                        onClick={() => {
-                                            const currentIndex = product.images.indexOf(selectedImage);
-                                            const nextIndex = (currentIndex + 1) % product.images.length;
-                                            setSelectedImage(product.images[nextIndex]);
-                                        }}
-                                    >
-                                        ›
-                                    </button> */}
-                                </div>
-                            )}
+                                        <img src={getImageUrl(img)} alt={`${product.name} view ${index + 1}`} />
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="main-image-wrapper">
+                            <motion.div
+                                className={`main-image-container ${imageZoom ? 'zoomed' : ''}`}
+                                onMouseEnter={() => setImageZoom(true)}
+                                onMouseLeave={() => setImageZoom(false)}
+                                onMouseMove={handleImageZoom}
+                            >
+                                <img
+                                    src={getImageUrl(selectedImage)}
+                                    alt={product.name}
+                                    className="main-image"
+                                    style={imageZoom
+                                        ? { transform: `scale(2)`, transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
+                                        : {}
+                                    }
+                                />
+                            </motion.div>
                         </div>
                     </div>
 
-                    {/* Right: Info & Logic */}
+                    {/* Right: Info */}
                     <div className="product-info-panel">
                         <div className="product-header">
                             <div className="brand-rating">
@@ -211,16 +174,13 @@ const ProductDetails = () => {
                             </div>
 
                             <h1 className="product-title">{product.name}</h1>
-
-                            <div className="product-sku">
-                                SKU: <span>{product.sku || `ELG-${product._id?.slice(-6)}`}</span>
-                            </div>
+                            <div className="product-sku">SKU: <span>{product.sku || `ELG-${product._id?.slice(-6)}`}</span></div>
 
                             <div className="pricing-display">
                                 <h2 className="current-price">Rs. {totalPrice.toLocaleString()}</h2>
                                 <div className="price-breakdown">
-                                    <p className="base-price-info">Base: Rs. {basePrice.toLocaleString()} / Gaz</p>
-                                    <p className="unit-price-info">Unit: Rs. {unitPrice.toLocaleString()} (for {gazSelected} Gaz)</p>
+                                    <p>Base: Rs. {basePrice.toLocaleString()} / Gaz</p>
+                                    <p>Unit: Rs. {unitPrice.toLocaleString()} (for {gazSelected} Gaz)</p>
                                 </div>
                             </div>
 
@@ -235,216 +195,62 @@ const ProductDetails = () => {
                             </div>
                         </div>
 
-                        {/* Tabbed Content */}
+                        {/* Tabs */}
                         <div className="product-tabs">
                             <div className="tab-headers">
-                                <button
-                                    className={`tab-header ${activeTab === 'description' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('description')}
-                                >
-                                    Description
-                                </button>
-                                <button
-                                    className={`tab-header ${activeTab === 'details' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('details')}
-                                >
-                                    Details
-                                </button>
-                                <button
-                                    className={`tab-header ${activeTab === 'shipping' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('shipping')}
-                                >
-                                    Shipping
-                                </button>
+                                <button className={activeTab==='description'?'active':''} onClick={()=>setActiveTab('description')}>Description</button>
+                                <button className={activeTab==='details'?'active':''} onClick={()=>setActiveTab('details')}>Details</button>
+                                <button className={activeTab==='shipping'?'active':''} onClick={()=>setActiveTab('shipping')}>Shipping</button>
                             </div>
-
                             <div className="tab-content">
-                                {activeTab === 'description' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="description-text"
-                                    >
-                                        {product.description || "Experience the perfect blend of traditional craftsmanship and contemporary design. Each piece is meticulously crafted using premium fabrics and attention to detail."}
-                                    </motion.div>
-                                )}
-
-                                {activeTab === 'details' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="details-list"
-                                    >
-                                        <div className="detail-item">
-                                            <span className="detail-label">Fabric:</span>
-                                            <span className="detail-value">{product.fabricDetails || "Premium Quality"}</span>
-                                        </div>
-                                        <div className="detail-item">
-                                            <span className="detail-label">Category:</span>
-                                            <span className="detail-value">{product.category?.name || "Unstitched"}</span>
-                                        </div>
-                                        <div className="detail-item">
-                                            <span className="detail-label">Care Instructions:</span>
-                                            <span className="detail-value">Dry Clean Only</span>
-                                        </div>
-                                        <div className="detail-item">
-                                            <span className="detail-label">Collection:</span>
-                                            <span className="detail-value">{product.collection || "Summer 2026"}</span>
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {activeTab === 'shipping' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="shipping-info"
-                                    >
-                                        <p>• Free shipping on orders above Rs. 5000</p>
-                                        <p>• Estimated delivery: 5-7 business days</p>
-                                        <p>• Easy returns within 7 days</p>
-                                    </motion.div>
-                                )}
+                                {activeTab==='description' && <motion.div>{product.description || "Beautifully crafted traditional wear."}</motion.div>}
+                                {activeTab==='details' && <motion.div>
+                                    <div>Fabric: {product.fabricDetails || "Premium Quality"}</div>
+                                    <div>Category: {product.category?.name || "Unstitched"}</div>
+                                    <div>Care: Dry Clean Only</div>
+                                    <div>Collection: {product.collection || "Summer 2026"}</div>
+                                </motion.div>}
+                                {activeTab==='shipping' && <motion.div>
+                                    <p>• Free shipping on orders above Rs. 5000</p>
+                                    <p>• Estimated delivery: 5-7 business days</p>
+                                    <p>• Easy returns within 7 days</p>
+                                </motion.div>}
                             </div>
                         </div>
 
+                        {/* Configuration & Actions */}
                         <div className="product-configuration">
+                            <label>Select Gaz:</label>
+                            <select value={gazSelected} onChange={handleGazChange}>
+                                {[1,1.5,2,2.5,3,3.5,4,4.5,5].map(v=><option key={v} value={v}>{v} Gaz</option>)}
+                            </select>
 
-                            <div className="config-row">
-
-                                <div className="config-group">
-
-                                    <label htmlFor="gazSelect">Select Gaz:</label>
-
-                                    <select
-                                        id="gazSelect"
-                                        name="gaz"
-                                        className="input-control select-control"
-                                        value={gazSelected}
-                                        onChange={handleGazChange}
-                                    >
-
-                                        {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map(val => (
-                                            <option key={val} value={val}>
-                                                {val} Gaz
-                                            </option>
-                                        ))}
-
-                                    </select>
-
-                                </div>
-
-                                <div className="config-group">
-
-                                    <label htmlFor="quantity">Quantity:</label>
-
-                                    <div className="quantity-selector">
-
-                                        <button
-                                            type="button"
-                                            className="qty-btn"
-                                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                            disabled={quantity <= 1}
-                                        >
-                                            <FiMinus />
-                                        </button>
-
-                                        <input
-                                            id="quantity"
-                                            name="quantity"
-                                            type="number"
-                                            value={quantity}
-                                            readOnly
-                                            autoComplete="off"
-                                            className="qty-input"
-                                        />
-
-                                        <button
-                                            type="button"
-                                            className="qty-btn"
-                                            onClick={() => setQuantity(quantity + 1)}
-                                            disabled={product.countInStock <= quantity}
-                                        >
-                                            <FiPlus />
-                                        </button>
-
-                                    </div>
-
-                                </div>
-
+                            <label>Quantity:</label>
+                            <div className="quantity-selector">
+                                <button onClick={()=>setQuantity(Math.max(1,quantity-1))} disabled={quantity<=1}><FiMinus /></button>
+                                <input type="number" value={quantity} readOnly />
+                                <button onClick={()=>setQuantity(quantity+1)} disabled={quantity>=product.countInStock}><FiPlus /></button>
                             </div>
-
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="product-actions">
-                            <button
-                                className={`btn btn-primary add-to-cart-btn ${added ? 'added' : ''}`}
-                                onClick={handleAddToCart}
-                                disabled={added || product.countInStock <= 0}
-                            >
-                                {product.countInStock <= 0 ? (
-                                    'Sold Out'
-                                ) : added ? (
-                                    <><FiCheck /> Added to Bag</>
-                                ) : (
-                                    'Add to Bag'
-                                )}
+                            <button onClick={handleAddToCart} disabled={added || product.countInStock<=0}>
+                                {product.countInStock<=0?'Sold Out':added?<><FiCheck /> Added</>: 'Add to Bag'}
                             </button>
-
-                            <button
-                                className={`btn btn-outline wishlist-btn ${wishlist ? 'active' : ''}`}
-                                onClick={() => setWishlist(!wishlist)}
-                            >
-                                <FiHeart />
-                                <span className="btn-text">Wishlist</span>
-                            </button>
-
-                            <button className="btn btn-outline share-btn">
-                                <FiShare2 />
-                                <span className="btn-text">Share</span>
-                            </button>
-                        </div>
-
-                        {/* Features */}
-                        <div className="product-features">
-                            <div className="feature-item">
-                                <FiTruck />
-                                <span>Free Shipping</span>
-                            </div>
-                            <div className="feature-item">
-                                <FiShield />
-                                <span>Premium Quality</span>
-                            </div>
-                            <div className="feature-item">
-                                <FiRefreshCw />
-                                <span>Easy Returns</span>
-                            </div>
+                            <button onClick={()=>setWishlist(!wishlist)}>{wishlist?'❤️':'🤍'} Wishlist</button>
+                            <button>Share</button>
                         </div>
                     </div>
                 </div>
 
                 {/* Related Products */}
-                {relatedProducts.length > 0 && (
-                    <motion.div
-                        className="related-section"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.6 }}
-                    >
-                        <div className="section-header">
-                            <span className="section-tag">COMPLETE THE LOOK</span>
-                            <h2>YOU MAY ALSO LIKE</h2>
+                {relatedProducts.length>0 && (
+                    <div className="related-section">
+                        <h2>You may also like</h2>
+                        <div className="product-grid">
+                            {relatedProducts.map(p=> <ProductCard key={p._id} product={p} />)}
                         </div>
-                        <div className="product-grid related-grid">
-                            {relatedProducts.map(p => (
-                                <ProductCard key={p._id} product={p} />
-                            ))}
-                        </div>
-                    </motion.div>
+                    </div>
                 )}
             </div>
         </div>
