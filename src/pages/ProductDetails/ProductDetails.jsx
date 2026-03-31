@@ -66,7 +66,7 @@ const ProductDetails = () => {
         addToCart({
             product: product._id,
             name: product.name,
-            image: product.images[0],
+            image: `https://mern-website-ebon.vercel.app/${product.images[0]}`, // ✅ full URL
             price: totalPrice,
             gazSelected,
             quantity,
